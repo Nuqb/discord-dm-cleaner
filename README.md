@@ -4,7 +4,7 @@
 
 Review and delete **your own messages** in a one-to-one Discord DM. Windows only. No installer.
 
-[![Download Discord DM Cleaner v1.0.0 for Windows](docs/images/download-windows.svg)](https://github.com/Nuqb/discord-dm-cleaner/releases/download/v1.0.0/Discord-DM-Cleaner-v1.0.0-Windows.zip)
+[![Download Discord DM Cleaner v1.0.1 for Windows](docs/images/download-windows.svg)](https://github.com/Nuqb/discord-dm-cleaner/releases/download/v1.0.1/Discord-DM-Cleaner-v1.0.1-Windows.zip)
 
 [All releases](https://github.com/Nuqb/discord-dm-cleaner/releases)
 
@@ -63,7 +63,7 @@ Tests use fake responses and example identities only. **No live account compatib
 
 ### Releasing
 
-Update `VERSION`, assembly metadata, UI title, client user agent, download links, and release notes together. Run `scripts/build.ps1 -Package` on Windows. Push the reviewed commit and a matching `v1.0.0` style tag; the release workflow builds, tests, and attaches the portable ZIP and `SHA256SUMS.txt`. A tag/version mismatch fails the workflow.
+Update `VERSION`, assembly metadata, UI title, client user agent, download links, and release notes together. Run `scripts/build.ps1 -Package` on Windows. Push the reviewed commit and a matching `v1.0.1` style tag; the release workflow builds, tests, and attaches the portable ZIP and `SHA256SUMS.txt`. A tag/version mismatch fails the workflow.
 
 See [release notes](docs/RELEASE-NOTES.md). No open-source license has been selected yet; public source availability alone does not grant redistribution or modification rights.
 

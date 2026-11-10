@@ -11,5 +11,5 @@ To display the logo in your personal GitHub README:
 </a>
 ```
 
-The artwork was generated for this project. It is an unofficial project identity,
-not Discord's logo or a statement of endorsement.
+The artwork was generated for this project and incorporates the recognizable Discord Clyde symbol with a DM envelope. It is an unofficial project identity,
+and does not imply endorsement by Discord. Discord branding belongs to Discord.

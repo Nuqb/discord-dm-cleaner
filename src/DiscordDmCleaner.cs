@@ -45,7 +45,7 @@ namespace DiscordDmCleaner {
                 throw new ArgumentException("Enter a valid account token in the local window.");
             http = new HttpClient(handler) { BaseAddress = new Uri("https://discord.com/api/v10/"), Timeout = TimeSpan.FromSeconds(40) };
             http.DefaultRequestHeaders.Add("Authorization", token.Trim());
-            http.DefaultRequestHeaders.UserAgent.ParseAdd("DiscordDmCleaner/1.0.0");
+            http.DefaultRequestHeaders.UserAgent.ParseAdd("DiscordDmCleaner/1.0.1");
             delay = wait;
         }
         static double Seconds(string value) {

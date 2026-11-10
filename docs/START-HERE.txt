@@ -1,4 +1,4 @@
-DISCORD DM CLEANER 1.0.0 - WINDOWS
+DISCORD DM CLEANER 1.0.1 - WINDOWS
 
 1. Extract the entire ZIP, then open DiscordDmCleaner.exe.
 2. Click ? for setup help. Enter your account token locally and a DM message link.

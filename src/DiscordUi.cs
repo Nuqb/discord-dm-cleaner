@@ -129,7 +129,7 @@ namespace DiscordDmCleaner {
         Plan plan;
         bool busy;
 
-        public CleanerWindow() : base("My DM Cleaner 1.0.0",new Size(896,632),true) {
+        public CleanerWindow() : base("My DM Cleaner 1.0.1",new Size(896,632),true) {
             var top = new Panel { Bounds = new Rectangle(1,35,894,60), BackColor = Theme.Canvas }; Controls.Add(top);
             Theme.Label(top,"Direct Message Cleaner",31,18,660,28,13,Theme.Text,true);
             help = new DiscordButton { Text = "?", Radius = 17, BackColor = Theme.Card, ForeColor = Theme.Muted,

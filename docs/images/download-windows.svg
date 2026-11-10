@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="360" height="76" viewBox="0 0 360 76" role="img" aria-labelledby="title desc">
   <title id="title">Download Discord DM Cleaner for Windows</title>
-  <desc id="desc">A purple download button with a direct-message conversation icon. Version 1.0.0.</desc>
+  <desc id="desc">A purple download button with a direct-message conversation icon. Version 1.0.1.</desc>
   <defs>
     <linearGradient id="bg" x2="1" y2="1">
       <stop stop-color="#5865f2"/>
@@ -18,7 +18,7 @@
   </g>
   <g fill="white" font-family="Segoe UI,Arial,sans-serif">
     <text x="84" y="33" font-size="18" font-weight="700">Download for Windows</text>
-    <text x="85" y="55" font-size="12" fill="#e5e4ff">DISCORD DM CLEANER  /  v1.0.0</text>
+    <text x="85" y="55" font-size="12" fill="#e5e4ff">DISCORD DM CLEANER  /  v1.0.1</text>
   </g>
   <path d="M331 27v17m-6-6 6 6 6-6m-14 12h16" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
