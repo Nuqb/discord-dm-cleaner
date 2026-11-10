@@ -4,16 +4,18 @@
 
 Review and delete **your own messages** in a one-to-one Discord DM. Windows only. No installer.
 
-**[â¬‡ Download v1.0.0 for Windows](https://github.com/Nuqb/discord-dm-cleaner/releases/download/v1.0.0/Discord-DM-Cleaner-v1.0.0-Windows.zip)** Â· [All releases](https://github.com/Nuqb/discord-dm-cleaner/releases)
+[![Download Discord DM Cleaner v1.0.0 for Windows](docs/images/download-windows.svg)](https://github.com/Nuqb/discord-dm-cleaner/releases/download/v1.0.0/Discord-DM-Cleaner-v1.0.0-Windows.zip)
+
+[All releases](https://github.com/Nuqb/discord-dm-cleaner/releases)
 
 ![Discord DM Cleaner main window](docs/images/app.png)
 
 ### Get started
 
-1. **Download** the ZIP above â†’ right-click it â†’ **Extract All**.
+1. **Download** the ZIP above, right-click it, then choose **Extract All**.
 2. Open **DiscordDmCleaner.exe**. Requires Windows with .NET Framework 4.x. The app is unsigned; Windows may show a reputation warning. Only run downloads you trust.
 3. Click **?** for setup help. Enter your account token locally and paste a DM message link.
-4. **Scan conversation** â†’ check the account, recipient, and count â†’ **Delete my messages** â†’ confirm.
+4. **Scan conversation**, check the account, recipient, and count, then choose **Delete my messages** and confirm.
 
 ![Confirmation dialog with example account details](docs/images/confirmation.png)
 

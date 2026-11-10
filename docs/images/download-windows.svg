@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="76" viewBox="0 0 360 76" role="img" aria-labelledby="title desc">
+  <title id="title">Download Discord DM Cleaner for Windows</title>
+  <desc id="desc">A purple download button with a direct-message conversation icon. Version 1.0.0.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1">
+      <stop stop-color="#5865f2"/>
+      <stop offset="1" stop-color="#7047db"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="76" rx="14" fill="url(#bg)"/>
+  <rect x="1" y="1" width="358" height="74" rx="13" fill="none" stroke="#ffffff" stroke-opacity=".2"/>
+  <g transform="translate(17 15)">
+    <path d="M18 12h25a7 7 0 0 1 7 7v14a7 7 0 0 1-7 7h-3l-8 6v-6H18a7 7 0 0 1-7-7V19a7 7 0 0 1 7-7Z" fill="#c9c5ff"/>
+    <path d="M8 0h25a8 8 0 0 1 8 8v15a8 8 0 0 1-8 8H20L9 39v-8H8a8 8 0 0 1-8-8V8a8 8 0 0 1 8-8Z" fill="white"/>
+    <path d="M12 10a29 29 0 0 1 17 0l3 11a24 24 0 0 1-23 0Z" fill="#5865f2"/>
+    <ellipse cx="16" cy="16" rx="2.2" ry="2.8" fill="white"/>
+    <ellipse cx="25" cy="16" rx="2.2" ry="2.8" fill="white"/>
+  </g>
+  <g fill="white" font-family="Segoe UI,Arial,sans-serif">
+    <text x="84" y="33" font-size="18" font-weight="700">Download for Windows</text>
+    <text x="85" y="55" font-size="12" fill="#e5e4ff">DISCORD DM CLEANER  /  v1.0.0</text>
+  </g>
+  <path d="M331 27v17m-6-6 6 6 6-6m-14 12h16" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
