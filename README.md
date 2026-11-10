@@ -4,11 +4,9 @@
 
 Review and delete **your own messages** in a one-to-one Discord DM. Windows only. No installer.
 
+Ok I know this one sounds a bit sus like a tool to hide messages from other people but the main purpose is just removing messages from someone who maybe wants to find a message to use againts you or embarras you publically etc. 
+
 [![Download Discord DM Cleaner v1.0.1 for Windows](docs/images/download-windows.svg)](https://github.com/Nuqb/discord-dm-cleaner/releases/download/v1.0.1/Discord-DM-Cleaner-v1.0.1-Windows.zip)
-
-[All releases](https://github.com/Nuqb/discord-dm-cleaner/releases)
-
-[MIT License](LICENSE) | [Contributing](CONTRIBUTING.md)
 
 ![Discord DM Cleaner main window](docs/images/app.png)
 
