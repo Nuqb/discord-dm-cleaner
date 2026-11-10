@@ -8,6 +8,8 @@ Review and delete **your own messages** in a one-to-one Discord DM. Windows only
 
 [All releases](https://github.com/Nuqb/discord-dm-cleaner/releases)
 
+[MIT License](LICENSE) | [Contributing](CONTRIBUTING.md)
+
 ![Discord DM Cleaner main window](docs/images/app.png)
 
 ### Get started
@@ -65,7 +67,13 @@ Tests use fake responses and example identities only. **No live account compatib
 
 Update `VERSION`, assembly metadata, UI title, client user agent, download links, and release notes together. Run `scripts/build.ps1 -Package` on Windows. Push the reviewed commit and a matching `v1.0.1` style tag; the release workflow builds, tests, and attaches the portable ZIP and `SHA256SUMS.txt`. A tag/version mismatch fails the workflow.
 
-See [release notes](docs/RELEASE-NOTES.md). No open-source license has been selected yet; public source availability alone does not grant redistribution or modification rights.
+See [release notes](docs/RELEASE-NOTES.md).
+
+### License and contributing
+
+Released under the [MIT License](LICENSE). You can use, modify, and distribute the code, including commercially, while retaining the copyright and license notice. The software is provided without warranty. Discord branding remains subject to its owners' rights; see [NOTICE](NOTICE).
+
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and submission guidelines.
 
 
 Want the logo for your profile? See [logo files and README embed snippet](docs/BRANDING.md).

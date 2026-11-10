@@ -26,6 +26,7 @@ try {
         New-Item -ItemType Directory $stage | Out-Null
         Copy-Item artifacts/bin/DiscordDmCleaner.exe $stage
         Copy-Item docs/START-HERE.txt $stage
+        Copy-Item LICENSE,NOTICE $stage
         Copy-Item docs/RELEASE-NOTES.md "$stage/RELEASE-NOTES.txt"
         $zip = "artifacts/release/Discord-DM-Cleaner-v$version-Windows.zip"
         Compress-Archive -Path "$stage/*" -DestinationPath $zip -Force
