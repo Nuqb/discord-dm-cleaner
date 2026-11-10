@@ -1,0 +1,22 @@
+DISCORD DM CLEANER 1.0.0 - WINDOWS
+
+1. Extract the entire ZIP, then open DiscordDmCleaner.exe.
+2. Click ? for setup help. Enter your account token locally and a DM message link.
+3. Scan conversation. Check your account, recipient, and message count.
+4. Delete my messages, then type the confirmation phrase.
+
+Deletion is permanent. Stop prevents further work; an in-flight request may finish.
+Scan again after stopping. Only your messages in one-to-one DMs are eligible.
+
+Your token grants account access. Never share it. The app keeps it in memory,
+sends it only to Discord, and does not save it. Close the app when finished.
+
+Discord prohibits personal-account automation and says it can lead to account
+termination: https://support.discord.com/hc/en-us/articles/115002192352
+Manual deletion in Discord is the supported alternative. This is unofficial.
+
+Requires Windows and .NET Framework 4.x. No installer. This executable is unsigned.
+Only run downloads you trust. Tests use simulated responses; live account
+compatibility has not been verified.
+
+Source and updates: https://github.com/Nuqb/discord-dm-cleaner

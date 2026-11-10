@@ -1,0 +1,29 @@
+# Local prototypes and previous release bundles
+/work/
+/outputs/
+# Reproducible build/test/release output
+/artifacts/
+**/bin/
+**/obj/
+*.exe
+*.zip
+*.pdb
+*.log
+# Local credentials and configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*token*.txt
+*credentials*.json
+# Editors and OS metadata
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+Thumbs.db
+.DS_Store
