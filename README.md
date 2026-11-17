@@ -6,7 +6,7 @@ Review and delete **your own messages** in a one-to-one Discord DM. Windows only
 
 Ok I know this one sounds a bit sus like a tool to hide messages from other people but the main purpose is just removing messages from someone who maybe wants to find a message to use againts you or embarras you publically etc. 
 
-[![Download Discord DM Cleaner v1.0.1 for Windows](docs/images/download-windows.svg)](https://github.com/Nuqb/discord-dm-cleaner/releases/download/v1.0.1/Discord-DM-Cleaner-v1.0.1-Windows.zip)
+[![Download Discord DM Cleaner v1.0.2 for Windows](docs/images/download-windows.svg)](https://github.com/Nuqb/discord-dm-cleaner/releases/download/v1.0.2/Discord-DM-Cleaner-v1.0.2-Windows.zip)
 
 ![Discord DM Cleaner main window](docs/images/app.png)
 
@@ -57,13 +57,13 @@ Old local prototypes (`work/`, `outputs/`) and all generated binaries are ignore
 
 The token is supplied manually, kept in process memory, and sent only to Discord's HTTPS API as an Authorization header. The client disables redirects. It does not read saved credentials, the clipboard, or Discord's process/files. It does not persist tokens or message history; closing the app is not a guarantee of secure memory erasure by Windows.
 
-Scanning paginates available history and filters by the authenticated account. Deletion uses the completed scan, rechecks account and recipient, then verifies each message's exact ID, channel, and author. Rate-limit responses are honored. System entries are excluded. Copies, screenshots, and downloaded attachments cannot be recalled.
+Scanning paginates available history and filters by the authenticated account. The scan checks each message's ID, channel, author, and type. After confirmation, the app rechecks the account and recipient once, then sends one delete request per scanned message ID. Discord can require retries. Its cooldown carries over if you stop and scan again in the same window. System entries are excluded. Copies, screenshots, and downloaded attachments cannot be recalled.
 
 Tests use fake responses and example identities only. **No live account compatibility or real deletion has been verified.** Discord may refuse these requests or change its API. Never put real tokens or private conversation data in issues, screenshots, tests, or commits.
 
 ### Releasing
 
-Update `VERSION`, assembly metadata, UI title, client user agent, download links, and release notes together. Run `scripts/build.ps1 -Package` on Windows. Push the reviewed commit and a matching `v1.0.1` style tag; the release workflow builds, tests, and attaches the portable ZIP and `SHA256SUMS.txt`. A tag/version mismatch fails the workflow.
+Update `VERSION`, assembly metadata, UI title, client user agent, download links, and release notes together. Run `scripts/build.ps1 -Package` on Windows. Push the reviewed commit and a matching `v1.0.2` style tag; the release workflow builds, tests, and attaches the portable ZIP and `SHA256SUMS.txt`. A tag/version mismatch fails the workflow.
 
 See [release notes](docs/RELEASE-NOTES.md).
 

@@ -125,11 +125,13 @@ namespace DiscordDmCleaner {
         readonly Button showToken;
         CancellationTokenSource cancel;
         DiscordApi api;
+        internal const string AccountRisk = "Discord prohibits personal account automation and may terminate your account.";
+        readonly DiscordCooldown cooldown = new DiscordCooldown();
         Cleaner cleaner;
         Plan plan;
         bool busy;
 
-        public CleanerWindow() : base("My DM Cleaner 1.0.1",new Size(896,632),true) {
+        public CleanerWindow() : base("My DM Cleaner 1.0.2",new Size(896,632),true) {
             var top = new Panel { Bounds = new Rectangle(1,35,894,60), BackColor = Theme.Canvas }; Controls.Add(top);
             Theme.Label(top,"Direct Message Cleaner",31,18,660,28,13,Theme.Text,true);
             help = new DiscordButton { Text = "?", Radius = 17, BackColor = Theme.Card, ForeColor = Theme.Muted,
@@ -146,6 +148,7 @@ namespace DiscordDmCleaner {
                 Font = new Font("Segoe UI",9), Bounds = new Rectangle(404,7,58,32), AccessibleName = "Show or hide account token", TabIndex = 1 };
             showToken.Click += delegate { token.UseSystemPasswordChar = !token.UseSystemPasswordChar; showToken.Text = token.UseSystemPasswordChar ? "Show" : "Hide"; };
             tokenPanel.Controls.Add(showToken);
+            Theme.Label(connection,AccountRisk,20,141,470,42,9.5f,Theme.Gold);
             Theme.Label(connection,"Direct message",20,184,430,25,10,Theme.Text,true);
             var linkPanel = new RoundPanel { BackColor = Theme.Input, Radius = 6, Bounds = new Rectangle(20,215,470,46) }; connection.Controls.Add(linkPanel);
             channel = Theme.Edit(linkPanel,470,false); channel.AccessibleName = "DM message link or channel ID"; channel.TabIndex = 0;
@@ -195,7 +198,7 @@ namespace DiscordDmCleaner {
         async Task Scan() {
             plan = null; ClearClient(); summary.Text = "Checking your account and the DM recipient..."; recipient.Text = "Finding conversation"; count.Text = "\u2014"; countCaption.Text = "scanning your available history";
             try {
-                string id = Cleaner.ChannelId(channel.Text); api = new DiscordApi(token.Text); api.Status = UpdateStatus;
+                string id = Cleaner.ChannelId(channel.Text); api = new DiscordApi(token.Text, cooldown); api.Status = UpdateStatus;
                 cleaner = new Cleaner(api); cleaner.Status = UpdateStatus;
                 cancel = new CancellationTokenSource(); Busy(true); Phase("Scanning",Theme.Blurple); status.Text = "Checking the account and one-to-one DM...";
                 plan = await cleaner.Scan(id,cancel.Token);
@@ -215,10 +218,10 @@ namespace DiscordDmCleaner {
             var progress = new DeleteProgress();
             try {
                 cancel = new CancellationTokenSource(); Busy(true); Phase("Deleting",Theme.Danger);
-                status.Text = "Rechecking ownership before deleting each message...";
+                status.Text = "Checking the account and DM recipient before deleting scanned messages...";
                 await cleaner.Delete(plan,progress,cancel.Token);
                 count.Text = progress.Deleted.ToString("N0"); countCaption.Text = "messages deleted";
-                status.Text = "Finished. Deleted " + progress.Deleted + "; already gone " + progress.AlreadyGone + "; not found during verification " + progress.UnverifiedSkipped + "; skipped system entries " + progress.SystemSkipped + ". Scan again to verify."; Phase("Finished",Theme.Green);
+                status.Text = "Finished. Deleted " + progress.Deleted + "; already gone " + progress.AlreadyGone + "; system entries excluded during scan " + plan.SystemMessages + ". Scan again to verify."; Phase("Finished",Theme.Green);
             } catch (OperationCanceledException) { status.Text = "Stopped after " + progress.Deleted + " confirmed deletions. Scan again; a request in flight may have completed."; Phase("Stopped",Theme.Gold); }
             catch (Exception error) { status.Text = SafeMessage(error) + " Confirmed deleted: " + progress.Deleted + ". Scan again before retrying."; Phase("Needs attention",Theme.Danger); }
             finally { plan = null; if (cancel != null) { cancel.Dispose(); cancel = null; } Busy(false); ClearClient(); }
@@ -316,7 +319,7 @@ namespace DiscordDmCleaner {
                 Theme.Label(example,"the long value to copy",162,36,368,23,10,Theme.Text,true);
                 TextLine("Find authorization. Copy only the long value beside it, then paste it below. This is your private login key.",225,43);
                 content.Controls.Add(tokenPanel);
-                TextLine("Keep it private. If authorization is missing, try another messages row.",328,27,9);
+                TextLine(CleanerWindow.AccountRisk,324,42,9);
             } else if(page == 3) {
                 Heading("Choose your conversation");
                 Instruction("1. Open the Discord desktop app", "Go to the DM you want to clean.",74,58);

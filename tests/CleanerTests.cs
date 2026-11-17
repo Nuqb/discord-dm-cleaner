@@ -12,7 +12,7 @@ class FakeDiscord : HttpMessageHandler {
     public string Owner = "100", Recipient = "200";
     public int ChannelType = 1;
     public int PageCalls, Deletes, Requests, RateLimitOnce, SingleMessageGets;
-    public bool ChangedAuthor, MissingMessage, MissingChannel, CancelAfterFirst, ReturnNeighbor, RefuseDelete;
+    public bool MissingMessage, MissingChannel, CancelAfterFirst, RefuseDelete;
     public CancellationTokenSource CancelSource;
     public readonly List<string> DeletedIds = new List<string>();
     public readonly List<double> Delays = new List<double>();
@@ -34,12 +34,6 @@ class FakeDiscord : HttpMessageHandler {
         if (route == "users/@me") return Task.FromResult(Reply(200, new { id = Owner, username = "myself", bot = false }));
         if (route == "channels/300") return Task.FromResult(Reply(200, new { id = "300", type = ChannelType, recipients = new[] { new { id = Recipient, username = "friend" } } }));
         if (route.StartsWith("channels/300/messages?")) {
-            if (route.Contains("around=")) {
-                if (MissingChannel) return Task.FromResult(Reply(404, new { code = 10003 }));
-                if (MissingMessage) return Task.FromResult(Reply(200, new object[0]));
-                string target = route.Split(new[] { "around=" }, StringSplitOptions.None)[1].Split('&')[0];
-                return Task.FromResult(Reply(200, new object[] { Message(ReturnNeighbor ? "500" : target, ChangedAuthor ? "200" : "100", 0) }));
-            }
             PageCalls++;
             return Task.FromResult(Reply(200, Page != null ? Page(route) :
                 (PageCalls == 1 ? new object[] { Message("900", "100", 0), Message("800", "200", 0), Message("700", "100", 19), Message("600", "100", 3) } : new object[0])));
@@ -86,11 +80,22 @@ class CleanerTests {
         await Run("Scan is read-only, filters other authors and system entries, paginates past short pages", async delegate {
             var fake = new FakeDiscord();
             fake.Page = route => route.Contains("before=600") ? new object[] { FakeDiscord.Message("500", "100", 0) } :
-                route.Contains("before=500") ? new object[0] : new object[] { FakeDiscord.Message("900", "100", 0), FakeDiscord.Message("800", "200", 0), FakeDiscord.Message("700", "100", 19), FakeDiscord.Message("600", "100", 3) };
+                route.Contains("before=500") ? new object[0] : new object[] { FakeDiscord.Message("900", "100", 0), FakeDiscord.Message("800", "200", 0), FakeDiscord.Message("900", "100", 0), FakeDiscord.Message("700", "100", 19), FakeDiscord.Message("600", "100", 3) };
             using (var api = new DiscordApi("FAKE-NOT-A-REAL-TOKEN", fake, fake.Wait)) {
                 var p = await new Cleaner(api).Scan("300", CancellationToken.None);
                 Check(p.MessageIds.SequenceEqual(new[] { "900", "700", "500" }), "Author filter or pagination");
                 Check(p.SystemMessages == 1 && fake.Deletes == 0 && fake.PageCalls == 3, "Read-only scan");
+            }
+        });
+        await Run("Malformed message types stop the scan before a deletion plan is returned", async delegate {
+            foreach (object invalid in new object[] { null, false, "0", 0.25 }) {
+                var message = FakeDiscord.Message("900", "100", 0);
+                message["type"] = invalid;
+                var fake = new FakeDiscord { Page = route => route.Contains("before=") ? new object[0] : new[] { message } };
+                using (var api = new DiscordApi("FAKE", fake, fake.Wait)) {
+                    await ExpectFailure(async () => { await new Cleaner(api).Scan("300", CancellationToken.None); });
+                    Check(fake.PageCalls == 1 && fake.Deletes == 0, "Malformed type accepted");
+                }
             }
         });
         await Run("Server channels and group DMs rejected before history is read", async delegate {
@@ -102,11 +107,13 @@ class CleanerTests {
                 }
             }
         });
-        await Run("Only scanned, reverified own messages are deleted", async delegate {
+        await Run("Each scanned own message costs one request after identity checks", async delegate {
             var fake = new FakeDiscord();
             using (var api = new DiscordApi("FAKE", fake, fake.Wait)) {
                 var cleaner = new Cleaner(api); var p = await cleaner.Scan("300", CancellationToken.None); var count = new DeleteProgress();
+                int before = fake.Requests;
                 await cleaner.Delete(p, count, CancellationToken.None);
+                Check(fake.Requests - before == 2 + p.MessageIds.Count, "Extra requests during deletion");
                 Check(fake.DeletedIds.SequenceEqual(new[] { "900", "700" }) && count.Deleted == 2, "Deletion scope");
                 Check(fake.SingleMessageGets == 0, "Bot-only lookup was used");
             }
@@ -120,13 +127,6 @@ class CleanerTests {
                     await ExpectFailure(() => cleaner.Delete(p, new DeleteProgress(), CancellationToken.None));
                     Check(fake.Deletes == 0, "Changed identity deleted");
                 }
-            }
-        });
-        await Run("Message ownership mismatch stops before any DELETE", async delegate {
-            var fake = new FakeDiscord();
-            using (var api = new DiscordApi("FAKE", fake, fake.Wait)) {
-                var cleaner = new Cleaner(api); var p = await cleaner.Scan("300", CancellationToken.None); fake.ChangedAuthor = true;
-                await ExpectFailure(() => cleaner.Delete(p, new DeleteProgress(), CancellationToken.None)); Check(fake.Deletes == 0, "Wrong author deleted");
             }
         });
         await Run("Rate limit retry honors Discord's requested wait", async delegate {
@@ -149,7 +149,7 @@ class CleanerTests {
             using (var api = new DiscordApi("FAKE", fake, fake.Wait)) {
                 var cleaner = new Cleaner(api); var p = await cleaner.Scan("300", CancellationToken.None); fake.MissingMessage = true;
                 var count = new DeleteProgress(); await cleaner.Delete(p, count, CancellationToken.None);
-                Check(count.UnverifiedSkipped == 2 && fake.Deletes == 0, "Missing message");
+                Check(count.AlreadyGone == 2 && fake.Deletes == 0, "Missing message");
                 fake.MissingMessage = false; fake.MissingChannel = true;
                 bool stopped = false; try { await cleaner.Delete(p, new DeleteProgress(), CancellationToken.None); } catch (ApiFailure) { stopped = true; }
                 Check(stopped, "Missing channel ignored");
@@ -161,12 +161,26 @@ class CleanerTests {
                 await ExpectFailure(async () => { await new Cleaner(api).Scan("300", CancellationToken.None); }); Check(fake.Deletes == 0, "Scan deleted");
             }
         });
-        await Run("Nearby messages cannot substitute for the exact verified target", async delegate {
-            var fake = new FakeDiscord();
-            using (var api = new DiscordApi("FAKE", fake, fake.Wait)) {
-                var cleaner = new Cleaner(api); var p = await cleaner.Scan("300", CancellationToken.None); fake.ReturnNeighbor = true;
-                var count = new DeleteProgress(); await cleaner.Delete(p, count, CancellationToken.None);
-                Check(count.UnverifiedSkipped == 2 && fake.Deletes == 0, "Neighbor substituted");
+        await Run("Stopping during a cooldown preserves the wait for the next client", async delegate {
+            var cooldown = new DiscordCooldown();
+            var first = new FakeDiscord { RateLimitOnce = 1 };
+            using (var stop = new CancellationTokenSource())
+            using (var api = new DiscordApi("FAKE", first, (span, ct) => {
+                stop.Cancel();
+                ct.ThrowIfCancellationRequested();
+                return Task.FromResult(0);
+            }, cooldown)) {
+                bool stopped = false;
+                try { await new Cleaner(api).Scan("300", stop.Token); } catch (OperationCanceledException) { stopped = true; }
+                Check(stopped && first.Requests == 1, "Scan did not stop during the wait");
+            }
+            var second = new FakeDiscord();
+            using (var api = new DiscordApi("FAKE", second, (span, ct) => {
+                Check(second.Requests == 0 && span > TimeSpan.Zero, "New request before cooldown");
+                return second.Wait(span, ct);
+            }, cooldown)) {
+                await api.Request(HttpMethod.Get, "users/@me", CancellationToken.None);
+                Check(second.Delays.Count == 1 && second.Requests == 1, "Fresh client lost cooldown");
             }
         });
         await Run("Deletion refusal reports code and step without disclosing token or IDs", async delegate {
@@ -200,7 +214,7 @@ class CleanerTests {
                 form.Close();
                 using (var icon = Theme.MakeIcon()) using (var file = System.IO.File.Create("artifacts/test-output/cleaner.ico")) icon.Save(file);
             }
-            using (var dialog = new ConfirmDeleteDialog(new Plan { AccountName = "yourname", AccountId = "123456789012345678", RecipientName = "friend", RecipientId = "234567890123456789", ChannelId = "345678901234567890" })) {
+            using (var dialog = new ConfirmDeleteDialog(new Plan(new List<string>()) { AccountName = "yourname", AccountId = "123456789012345678", RecipientName = "friend", RecipientId = "234567890123456789", ChannelId = "345678901234567890" })) {
                 dialog.ShowInTaskbar = false; dialog.Opacity = 0; dialog.Show();
                 System.Windows.Forms.Application.DoEvents();
                 using (var bitmap = new System.Drawing.Bitmap(dialog.Width,dialog.Height)) {
